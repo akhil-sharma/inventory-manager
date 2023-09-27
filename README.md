@@ -19,3 +19,5 @@ python=3.11.5
     NAME = `TYPE_<author>_<topic>`
 
     TYPE = `fix | feat | chore | docs | style | refactor | test`
+
+**Starting the Database** : `docker run --name db_postgres_inventory_manager -p 5432:5432 -e POSTGRES_PASSWORD=<password> -d postgres`
