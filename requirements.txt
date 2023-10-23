@@ -1,4 +1,5 @@
-fastapi
-uvicorn[standard]
-bcrypt
-sqlalchemy
+email-validator
+libsql-client
+python-decouple
+python-multipart
+python-jose[cryptography]

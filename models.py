@@ -1,18 +1,23 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
-class NewUser(BaseModel):
-    '''
-    This model is used when the information about the user is first received.
-    '''
+class UserBase(BaseModel):
     first_name: str
-    last_name: str
-    email: str
+    last_name: str | None = None
+    email: EmailStr
+
+class UserIn(UserBase):
     password: str
 
-class User(BaseModel):
-    '''
-    For regular work the user model does not require the password key.
-    '''
-    first_name: str
-    last_name: str
-    email: str
+class UserOut(UserBase):
+    pass
+
+class UserInDB(UserBase):
+    user_id: str
+    password_hash: str
+    
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+    
+class TokenData(BaseModel):
+    user_Id: str | None = None
