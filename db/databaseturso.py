@@ -1,9 +1,8 @@
 from .datainterface import DataInterface
-from models import UserIn, UserOut, UserInDB
+from models import UserOut, UserInDB
 import libsql_client
 from libsql_client import ClientSync, ResultSet
 from decouple import config
-from pydantic import EmailStr
 
 class DatabaseTurso(DataInterface):
        

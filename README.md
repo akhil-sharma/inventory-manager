@@ -4,11 +4,35 @@ A simple inventory management system individuals.
 
 python=3.11.5
 
+## .env
+
+The environment variables need to be set in a .env file which is placed in the root directory.
+
+The structure of the .env file is as follows:
+
+`# Database`
+
+`# Turso Access Details`
+
+`DATABASE_URL=<url>`
+
+`AUTH_TOKEN=<token>`
+
+`# JWT Configuration`
+
+`SECRET_KEY=<key>`
+
+`ALGORITHM=<alg>`
+
+`ACCESS_TOKEN_EXPIRE_MINUTES=<time>`
+
+NOTE: You can also set the environment variables directly in the shell if you don't want to create the .env file.
+
 ## Running the application
 
 1. **Installation** : `pip intall -r requirements.txt`
 
-2. **Production** : `uvicorn main:app`  | **Development** : uvicorn main:app --reload
+2. **Production** : `uvicorn main:app`  | **Development** : `uvicorn main:app --reload`
 
 ## Notes for the Contributers
 
@@ -20,4 +44,3 @@ python=3.11.5
 
     TYPE = `fix | feat | chore | docs | style | refactor | test`
 
-**Starting the Database** : `docker run --name db_postgres_inventory_manager -p 5432:5432 -e POSTGRES_PASSWORD=<password> -d postgres`
