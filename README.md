@@ -10,21 +10,17 @@ The environment variables need to be set in a .env file which is placed in the r
 
 The structure of the .env file is as follows:
 
-`# Database`
+```config
+# Database
+# Turso Access Details
+DATABASE_URL=<url>
+AUTH_TOKEN=<token>
 
-`# Turso Access Details`
-
-`DATABASE_URL=<url>`
-
-`AUTH_TOKEN=<token>`
-
-`# JWT Configuration`
-
-`SECRET_KEY=<key>`
-
-`ALGORITHM=<alg>`
-
-`ACCESS_TOKEN_EXPIRE_MINUTES=<time>`
+# JWT Configuration
+SECRET_KEY=<key>
+ALGORITHM=<alg>
+ACCESS_TOKEN_EXPIRE_MINUTES=<time>
+```
 
 NOTE: You can also set the environment variables directly in the shell if you don't want to create the .env file.
 
