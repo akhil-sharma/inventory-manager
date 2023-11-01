@@ -9,7 +9,7 @@ class UserIn(UserBase):
     password: str
 
 class UserOut(UserBase):
-    pass
+    user_id: str
 
 class UserInDB(UserBase):
     user_id: str

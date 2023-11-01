@@ -102,7 +102,7 @@ async def register_new_user(userDetail: UserIn):
     return newUser
     
 
-@app.get("/users/me")
+@app.get("/users/me", response_model=UserOut)
 async def read_users_me(
     current_user: Annotated[UserOut, Depends(get_current_user)]
 ):
