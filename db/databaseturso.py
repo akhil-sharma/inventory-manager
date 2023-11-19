@@ -203,7 +203,7 @@ class DatabaseTurso(DataInterface):
             client = self._get_client()
             
             resultSet = client.execute(
-                "SELECT item_id, item_name, user_id FROM tb_item where item_id = ? AND user_id = ?",
+                "SELECT item_id, item_name, user_id FROM tb_items where item_id = ? AND user_id = ?",
                 [item_id, user_id]
             )
             
@@ -229,7 +229,7 @@ class DatabaseTurso(DataInterface):
             client = self._get_client()
             
             resultSet = client.execute(
-                "SELECT item_id, item_name, user_id FROM tb_item where item_name = ? AND user_id = ?",
+                "SELECT item_id, item_name, user_id FROM tb_items where item_name = ? AND user_id = ?",
                 [item_name, user_id]
             )
             
@@ -276,12 +276,12 @@ class DatabaseTurso(DataInterface):
             client = self._get_client()
             
             resultSet = client.execute(
-                "SELECT inventory_id, item_id, user_id FROM tb_inventory_item where inventory_id = ? item_id = ? AND user_id = ?",
+                "SELECT inventory_id, item_id, user_id FROM tb_inventory_items where inventory_id = ? item_id = ? AND user_id = ?",
                 [inventory_item.inventory_id, inventory_item.item_id, inventory_item.user_id]
             )
             
             if len(resultSet) == 0:
-                raise Exception("Inventory Item not found.")
+                raise Exception("Item not in inventory.")
             
             return InventoryItem(
                 inventory_id=resultSet[0]["inventory_id"],
