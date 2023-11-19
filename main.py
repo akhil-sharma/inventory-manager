@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from typing import Annotated
+from typing import Annotated, List
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -8,7 +8,7 @@ from decouple import config
 import uuid
 
 from db.databaseturso import DatabaseTurso
-from models import UserOut, UserIn, UserInDB, TokenData, Token
+from models import UserOut, UserIn, UserInDB, TokenData, Token, InventoryInDB, InventoryIn, ItemIn, ItemInDB, InventoryItem
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 app = FastAPI()
@@ -62,8 +62,42 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     user = database.get_user_from_email(username)
     if user is None:
         raise credentials_exception
-    return user    
+    return user
 
+def create_inventory_service(inventory_in: InventoryIn, user_id: str) -> InventoryInDB:
+    existing_inventory = database.get_inventory_from_name(inventory_in.inventory_name, user_id)
+    if existing_inventory:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An inventory with the same name already exists."
+        )
+    
+    inventory_id = uuid.uuid4().hex
+    inventory_in_database = InventoryInDB(
+        inventory_name=inventory_in.inventory_name,
+        description=inventory_in.description,
+        inventory_id=inventory_id,
+        user_id=user_id
+    )
+    
+    return database.create_inventory(inventory_in_database)
+
+def create_item_service(item_in: ItemIn, user_id: str) -> ItemInDB:
+    existing_item = database.get_item_from_name(item_in.item_name, user_id)
+    if existing_item:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="An item with the same name already exists."
+        )
+    
+    item_id = uuid.uuid4().hex
+    item_in_database = ItemInDB(
+        item_name=item_in.item_name,
+        item_id=item_id,
+        user_id=user_id
+    )
+    
+    return database.create_item(item_in_database)
 
 # Paths
 
@@ -111,3 +145,47 @@ async def read_users_me(
     current_user: Annotated[UserOut, Depends(get_current_user)]
 ):
     return current_user
+
+@app.post("/inventories/", response_model=InventoryInDB)
+async def create_inventory(
+    inventory_in: InventoryIn, current_user: Annotated[UserOut, Depends(get_current_user)]
+):
+    return create_inventory_service(inventory_in, current_user.user_id)
+
+
+@app.post("/items/", response_model=ItemInDB)
+async def create_item(
+    item_in: ItemIn, current_user: Annotated[UserOut, Depends(get_current_user)]
+):
+    return create_item_service(item_in, current_user.user_id)
+
+@app.post("/inventories/{inventory_name}/items", response_model=List[InventoryItem])
+async def add_items_to_inventory(
+    inventory_name: str, items: List[ItemIn], current_user: Annotated[UserOut, Depends(get_current_user)]
+):
+    existing_inventory = database.get_inventory_from_name(inventory_name, current_user.user_id)
+    if not existing_inventory:
+        inventory_in = InventoryIn(inventory_name=inventory_name)
+        existing_inventory = create_inventory_service(inventory_in, current_user.user_id)
+
+    added_inventory_items = []
+
+    for item_in in items:
+        existing_item = database.get_item_from_name(item_in.item_name, current_user.user_id)
+        if not existing_item:
+            existing_item = create_item_service(item_in, current_user.user_id)
+
+        inventory_item_data = InventoryItem(
+            item_id=existing_item.item_id,
+            inventory_id=existing_inventory.inventory_id,
+            user_id=current_user.user_id
+        )
+        
+        existing_item_in_inventory = database.get_inventory_item(inventory_item_data)
+        if not existing_item_in_inventory:
+            added_item = database.add_item_to_inventory(inventory_item_data)
+            if not added_item:
+                raise
+            added_inventory_items.append(added_item)
+
+    return added_inventory_items
