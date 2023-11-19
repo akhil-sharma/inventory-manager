@@ -276,7 +276,7 @@ class DatabaseTurso(DataInterface):
             client = self._get_client()
             
             resultSet = client.execute(
-                "SELECT inventory_id, item_id, user_id FROM tb_inventory_items where inventory_id = ? item_id = ? AND user_id = ?",
+                "SELECT inventory_id, item_id, user_id FROM tb_inventory_items where inventory_id = ? AND item_id = ? AND user_id = ?",
                 [inventory_item.inventory_id, inventory_item.item_id, inventory_item.user_id]
             )
             
