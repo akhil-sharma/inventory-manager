@@ -21,3 +21,29 @@ class Token(BaseModel):
     
 class TokenData(BaseModel):
     user_Id: str | None = None
+
+class InventoryBase(BaseModel):
+    inventory_name: str
+    description: str | None = None
+
+class InventoryIn(InventoryBase):
+    pass
+
+class InventoryInDB(InventoryBase):
+    inventory_id: str
+    user_id: str
+
+class ItemBase(BaseModel):
+    item_name: str
+
+class ItemIn(ItemBase):
+    pass
+
+class ItemInDB(ItemBase):
+    item_id: str
+    user_id: str
+
+class InventoryItem(BaseModel):
+    item_id: str
+    inventory_id: str
+    user_id: str
