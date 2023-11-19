@@ -183,9 +183,10 @@ async def add_items_to_inventory(
         
         existing_item_in_inventory = database.get_inventory_item(inventory_item_data)
         if not existing_item_in_inventory:
+            print(item_in.item_name)
             added_item = database.add_item_to_inventory(inventory_item_data)
             if not added_item:
-                raise
+                continue  # continue processing rest of the items.
             added_inventory_items.append(added_item)
 
     return added_inventory_items
